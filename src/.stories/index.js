@@ -455,6 +455,56 @@ const NestedSortableList = SortableContainer(
   },
 );
 
+const AbsSortableLayer = SortableElement(({value}) => (
+  <div className={style.abstractLayer}>{value}</div>
+));
+const AbsSortableSection = SortableElement(({value}) => (
+  <div className={style.abstractSection}>{value}</div>
+));
+
+const AbsSortableList = SortableContainer(({items, className}) => {
+  return (
+    <div className={className}>
+      {items.map((item, index) => {
+        if (item.kind === 'layer') {
+          return (
+            <AbsSortableLayer key={item.id} index={index} value={item.value} />
+          );
+        }
+
+        if (item.kind === 'section') {
+          return (
+            <AbsSortableSection
+              key={item.id}
+              index={index}
+              value={item.value}
+            />
+          );
+        }
+
+        return null;
+      })}
+    </div>
+  );
+});
+
+function VariableWidthHeight() {
+  const [items, setItems] = React.useState([
+    {kind: 'layer', id: 'id-0', value: 'layer 0'},
+    {kind: 'section', id: 'id-1', value: 'section'},
+    {kind: 'layer', id: 'id-2', value: 'layer 1'},
+    {kind: 'layer', id: 'id-3', value: 'layer 2'},
+  ]);
+
+  return (
+    <AbsSortableList items={items} className={style.abstractRoot} axis="xy" />
+  );
+}
+
+storiesOf('Test', module).add('Variable grid', () => {
+  return <VariableWidthHeight />;
+});
+
 storiesOf('General | Layout / Vertical list', module)
   .add('Basic setup', () => {
     return (
