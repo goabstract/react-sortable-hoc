@@ -648,9 +648,9 @@ export default function sortableContainer(
 
         // For keyboard sorting, we want user input to dictate the position of the nodes
         const mustShiftBackward =
-          isKeySorting && (index > this.index && index <= prevIndex);
+          isKeySorting && index > this.index && index <= prevIndex;
         const mustShiftForward =
-          isKeySorting && (index < this.index && index >= prevIndex);
+          isKeySorting && index < this.index && index >= prevIndex;
 
         const translate = {
           x: 0,
@@ -722,7 +722,7 @@ export default function sortableContainer(
                   sortingOffset.top + windowScrollDelta.top + offset.height <=
                     edgeOffset.top))
             ) {
-              // If the current node is to the left on the same row, or above the node that's being dragged
+              // If the current nde is to the left on the same row, or above the node that's being dragged
               // then move it to the right
               translate.x = this.width + this.marginOffset.x;
               if (
@@ -811,8 +811,10 @@ export default function sortableContainer(
           }
         }
 
-        setTranslate3d(node, translate);
-        nodes[i].translate = translate;
+        if (this.props.enableTransitions) {
+          setTranslate3d(node, translate);
+          nodes[i].translate = translate;
+        }
       }
 
       if (this.newIndex == null) {

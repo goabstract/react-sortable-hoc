@@ -455,49 +455,122 @@ const NestedSortableList = SortableContainer(
   },
 );
 
-const AbsSortableLayer = SortableElement(({value}) => (
-  <div className={style.abstractLayer}>{value}</div>
-));
-const AbsSortableSection = SortableElement(({value}) => (
-  <div className={style.abstractSection}>{value}</div>
-));
+const AbsSortableLayer = SortableElement(
+  ({value, isActive, activeDirection}) => {
+    return (
+      <div
+        className={classNames(style.abstractLayer, {
+          [style.activeLeft]: isActive && activeDirection === 'left',
+          [style.activeRight]: isActive && activeDirection === 'right',
+        })}
+      >
+        {value}
+      </div>
+    );
+  },
+);
 
-const AbsSortableList = SortableContainer(({items, className}) => {
-  return (
-    <div className={className}>
-      {items.map((item, index) => {
-        if (item.kind === 'layer') {
-          return (
-            <AbsSortableLayer key={item.id} index={index} value={item.value} />
-          );
-        }
+const AbsSortableSection = SortableElement(
+  ({value, isActive, activeDirection}) => {
+    return (
+      <div
+        className={classNames(style.abstractSection, {
+          [style.activeLeft]: isActive && activeDirection === 'left',
+          [style.activeRight]: isActive && activeDirection === 'right',
+        })}
+      >
+        {value}
+      </div>
+    );
+  },
+);
 
-        if (item.kind === 'section') {
-          return (
-            <AbsSortableSection
-              key={item.id}
-              index={index}
-              value={item.value}
-            />
-          );
-        }
+const AbsSortableList = SortableContainer(
+  ({items, className, activeIndex, dragIndex}) => {
+    return (
+      <div className={className}>
+        {items.map((item, index) => {
+          const isActive = index === activeIndex && index !== dragIndex;
+          const activeDirection = isActive
+            ? activeIndex < dragIndex
+              ? 'left'
+              : 'right'
+            : undefined;
 
-        return null;
-      })}
-    </div>
-  );
-});
+          if (item.kind === 'layer') {
+            return (
+              <AbsSortableLayer
+                key={item.id}
+                index={index}
+                value={item.value}
+                isActive={isActive}
+                activeDirection={activeDirection}
+              />
+            );
+          }
+
+          if (item.kind === 'section') {
+            return (
+              <AbsSortableSection
+                key={item.id}
+                index={index}
+                value={item.value}
+                isActive={isActive}
+                activeDirection={activeDirection}
+              />
+            );
+          }
+
+          return null;
+        })}
+      </div>
+    );
+  },
+);
 
 function VariableWidthHeight() {
   const [items, setItems] = React.useState([
     {kind: 'layer', id: 'id-0', value: 'layer 0'},
+    {kind: 'layer', id: 'id-4', value: 'layer 3'},
+    {kind: 'layer', id: 'id-6', value: 'layer 6'},
+    {kind: 'layer', id: 'id-5', value: 'layer 5'},
     {kind: 'section', id: 'id-1', value: 'section'},
     {kind: 'layer', id: 'id-2', value: 'layer 1'},
     {kind: 'layer', id: 'id-3', value: 'layer 2'},
   ]);
 
+  const [dragIndex, setDragIndex] = React.useState(-1);
+  const [activeIndex, setActiveIndex] = React.useState(-1);
+
+  const handleUpdateBeforeSortStart = ({index}) => {
+    setDragIndex(index);
+  };
+
+  const handleSortOver = (targetIndex) => {
+    setActiveIndex(targetIndex);
+  };
+
+  const handleSortEnd = ({oldIndex, newIndex}) => {
+    setItems(arrayMove(items, oldIndex, newIndex));
+
+    setActiveIndex(-1);
+    setDragIndex(-1);
+  };
+
   return (
-    <AbsSortableList items={items} className={style.abstractRoot} axis="xy" />
+    <AbsSortableList
+      items={items}
+      className={style.abstractRoot}
+      axis="xy"
+      updateBeforeSortStart={handleUpdateBeforeSortStart}
+      onSortOver={({oldIndex, newIndex}) => {
+        handleSortOver(newIndex);
+      }}
+      onSortEnd={handleSortEnd}
+      enableTransitions={false}
+      dragIndex={dragIndex}
+      activeIndex={activeIndex}
+    />
   );
 }
 

@@ -253,7 +253,7 @@ $focusedOutlineColor: #4c9ffe;
 }
 
 .abstractRoot {
-  margin-top: 100px;
+  margin: 100px auto;
   display: flex;
   max-width: 600px;
   width: 100%;
@@ -266,6 +266,7 @@ $focusedOutlineColor: #4c9ffe;
   border: 2px solid #000;
   margin-right: 10px;
   margin-bottom: 10px;
+  background: #fff;
 }
 
 .abstractSection {
@@ -273,4 +274,33 @@ $focusedOutlineColor: #4c9ffe;
   width: 100%;
   margin-bottom: 10px;
   border: 2px solid #000;
+  background: #fff;
+}
+
+.activeLeft {
+  transform: translateX(8px);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -12px;
+    width: 2px;
+    background: blue;
+  }
+}
+
+.activeRight {
+  transform: translateX(-8px);
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: -12px;
+    width: 2px;
+    background: blue;
+  }
 }
