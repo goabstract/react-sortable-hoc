@@ -567,7 +567,7 @@ function VariableWidthHeight() {
         handleSortOver(newIndex);
       }}
       onSortEnd={handleSortEnd}
-      enableTransitions={false}
+      disableDefaultAnimations
       dragIndex={dragIndex}
       activeIndex={activeIndex}
     />

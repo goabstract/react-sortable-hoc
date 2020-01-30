@@ -811,7 +811,7 @@ export default function sortableContainer(
           }
         }
 
-        if (this.props.enableTransitions) {
+        if (!this.props.disableDefaultAnimations) {
           setTranslate3d(node, translate);
           nodes[i].translate = translate;
         }
